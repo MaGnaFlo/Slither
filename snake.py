@@ -1,7 +1,5 @@
 import pygame as pg
-
 from pygame.locals import QUIT
-
 
 WIDTH, HEIGHT = 640, 480 
 RED = (255,0,0)
@@ -9,6 +7,8 @@ MOVE_LEFT = -1
 MOVE_RIGHT = 1 
 MOVE_UP = -2
 MOVE_DOWN = 2
+INITIAL_PARTS = 8
+
 
 class SnakePart(pg.sprite.Sprite):
 	def __init__(self, pos, size, color):
@@ -33,21 +33,24 @@ class Snake(pg.sprite.Group):
 		super().__init__()
 
 		self._dpos = 20
-		
 		self.direction = MOVE_DOWN
 
 		for i in range(n_start):
 			part = SnakePart((0,0), (20, 20), RED)
-			part.set_pos((200+self._dpos*i,200))
+			part.set_pos((240, 100-self._dpos*i))
 			self.add(part)
 
-
+	def get_head(self):
+		for part in self:
+			break
+		return part
 
 	def update_pos(self, direction):
 		if self.direction == -direction:
 			direction = -direction
 		else:
 			self.direction = direction
+
 		for i, part in enumerate(self):
 			if i == 0:
 				current_pos = part.get_pos()
@@ -65,6 +68,27 @@ class Snake(pg.sprite.Group):
 				part.set_pos(current_pos)
 				current_pos = temp
 
+	def check_collisions(self):
+		
+		x, y = self.get_head().get_pos()
+
+		# with borders
+		collide = False
+		if x >= WIDTH-1 or x < 0 or y >= HEIGHT-1 or y < 0:
+			collide = True
+
+		# with itself
+		for part in self:
+			if part == self.get_head():
+				continue
+			x_, y_ = part.get_pos()
+			if x == x_ and y == y_:
+				collide = True
+				break
+
+		return collide
+
+
 
 
 
@@ -74,7 +98,7 @@ pg.display.set_caption("Slither")
 
 
 # init the snake
-snake = Snake()
+snake = Snake(INITIAL_PARTS)
 
 
 
@@ -132,11 +156,18 @@ while running:
 
 	screen.fill((0,0,0))
 	snake.update()
+	collide = snake.check_collisions()
+
+	if collide:
+		print("collided", snake.get_head().get_pos())
+
 	snake.draw(screen)
 
 	clock.tick(10)
 
 	pg.display.flip()
+
+
 pg.quit()
 
 
