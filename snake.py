@@ -1,19 +1,10 @@
-import pygame as pg
-from pygame.locals import QUIT
 import numpy as np
-
-WIDTH, HEIGHT = 640, 480 
-RED = (255, 0 ,0)
-YELLOW = (255, 255, 0)
-MOVE_LEFT = -1
-MOVE_RIGHT = 1 
-MOVE_UP = -2
-MOVE_DOWN = 2
-INITIAL_PARTS = 8
-DELTA_POS = 20
+import pygame as pg
+from parameters import *
 
 
 class SnakePart(pg.sprite.Sprite):
+	''' Handles a single snake part sprite.'''
 	def __init__(self, pos, size, color, direction=MOVE_DOWN):
 		super().__init__()
 
@@ -40,17 +31,19 @@ class SnakePart(pg.sprite.Sprite):
 
 
 class Snake(pg.sprite.Group):
+	''' Snake as a sum of its parts'''
 	def __init__(self, n_start=3):
 		super().__init__()
 
 		self.direction = MOVE_DOWN
 
 		for i in range(n_start):
-			part = SnakePart((0,0), (20, 20), RED)
+			part = SnakePart((0,0), (DELTA_POS, DELTA_POS), RED)
 			part.set_pos((240, 100-DELTA_POS*i))
 			self.add(part)
 
 	def add_part(self):
+		''' Used to add a new element at the tail. '''
 		tail = self.get_tail()
 		if tail.get_direction() == MOVE_DOWN:
 			x = tail.get_pos()[0] 
@@ -68,24 +61,30 @@ class Snake(pg.sprite.Group):
 			x = tail.get_pos()[0] 
 			y = tail.get_pos()[1] + DELTA_POS
 
-		part = SnakePart((0,0), (20, 20), RED)
+		part = SnakePart((0,0), (DELTA_POS, DELTA_POS), RED)
 		part.set_pos((x,y))
 		self.add(part)
 
 	def get_head(self):
+		''' Returns the first part of the snake. '''
 		return self.sprites()[0]
 
 	def get_tail(self):
+		''' Returns the last part of the snake. '''
 		return self.sprites()[-1]
 
 	def update_pos(self, direction):
+		''' Handles the update of the parts of the snake, depening
+			on the current direction the head is going. 
+		'''
 		if self.direction == -direction:
 			direction = -direction
 		else:
 			self.direction = direction
 
-		for i, part in enumerate(self):
-			if i == 0:
+		for part in self:
+			if part == self.get_head(): 
+				# this is the head. just update its new direction and position.
 				current_pos = part.get_pos()
 				current_direction = part.get_direction()
 				if direction == MOVE_LEFT:
@@ -99,6 +98,8 @@ class Snake(pg.sprite.Group):
 				part.set_direction(direction)
 
 			else:
+				# successively update the next parts, one after the other
+				# which become the next part, etc.
 				temp_pos = part.get_pos()
 				temp_dir = part.get_direction()
 				part.set_pos(current_pos)
@@ -106,8 +107,8 @@ class Snake(pg.sprite.Group):
 				current_pos = temp_pos
 				current_direction = temp_dir
 
-	def check_collisions(self, food):
-		
+	def check_collisions(self):
+		''' Checks if the head hits a wall or any other part of the snake. '''
 		x, y = self.get_head().get_pos()
 		# with borders
 		collide = False
@@ -126,6 +127,10 @@ class Snake(pg.sprite.Group):
 		return collide
 
 	def swallow_food(self, food):
+		''' Checks if we hit a food. Returns a boolean
+			according to whether or not the food must be 
+			killed and a new food created.
+		'''
 		x, y = self.get_head().get_pos()
 		x_food, y_food = food.get_pos()
 		if x == x_food and y == y_food:
@@ -135,11 +140,13 @@ class Snake(pg.sprite.Group):
 
 
 class Food(pg.sprite.Sprite):
+	''' Class managing a single food element. '''
 	def __init__(self, size=(20,20), color=YELLOW):
 		self.image = pg.Surface(size)
 		pg.draw.rect(self.image, color, pg.Rect(0, 0, *size))
 		self.rect = self.image.get_rect()
 
+		# the position is random within the lattice.
 		self.rect.x = np.random.randint(WIDTH // DELTA_POS) * DELTA_POS
 		self.rect.y = np.random.randint(HEIGHT // DELTA_POS) * DELTA_POS
 
@@ -148,92 +155,3 @@ class Food(pg.sprite.Sprite):
 
 	def draw(self, screen):
 		screen.blit(self.image, self.rect)
-
-
-pg.init()
-screen = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("Slither")
-
-
-# init the snake
-snake = Snake(INITIAL_PARTS)
-
-food = Food()
-clock = pg.time.Clock()
-
-
-move_left = False
-move_right = False
-move_up = False
-move_down = True
-
-food = Food()
-
-running = True
-while running:
-	for event in pg.event.get():
-
-		if event.type == QUIT:
-			running = False
-		elif event.type == pg.KEYDOWN:
-
-			if event.key == pg.K_q:
-				running = False
-
-			if event.key == pg.K_LEFT:
-				move_right = False
-				move_up = False
-				move_down = False
-				move_left = True
-
-			if event.key == pg.K_RIGHT:
-				move_left = False
-				move_up = False
-				move_down = False
-				move_right = True
-
-			if event.key == pg.K_UP:
-				move_left = False
-				move_right = False
-				move_down = False
-				move_up = True
-
-			if event.key == pg.K_DOWN:
-				move_left = False
-				move_right = False
-				move_up = False
-				move_down = True
-
-	if move_left:
-		snake.update_pos(MOVE_LEFT)
-	elif move_right:
-		snake.update_pos(MOVE_RIGHT)
-	elif move_up:
-		snake.update_pos(MOVE_UP)
-	elif move_down:
-		snake.update_pos(MOVE_DOWN)
-
-	screen.fill((0,0,0))
-
-	snake.update()
-	collide = snake.check_collisions(food)
-	swallowed = snake.swallow_food(food)
-	if swallowed:
-		snake.add_part()
-		food = Food()
-
-	if collide:
-		print("collided", snake.get_head().get_pos())
-	snake.draw(screen)
-
-	food.update()
-	food.draw(screen)
-
-	clock.tick(10)
-	pg.display.flip()
-
-
-pg.quit()
-
-
-
