@@ -5,10 +5,10 @@ from pygame.locals import QUIT
 
 WIDTH, HEIGHT = 640, 480 
 RED = (255,0,0)
-MOVE_LEFT = 0 
+MOVE_LEFT = -1
 MOVE_RIGHT = 1 
-MOVE_UP = 2 
-MOVE_DOWN = 3
+MOVE_UP = -2
+MOVE_DOWN = 2
 
 class SnakePart(pg.sprite.Sprite):
 	def __init__(self, pos, size, color):
@@ -44,7 +44,10 @@ class Snake(pg.sprite.Group):
 
 
 	def update_pos(self, direction):
-		current_pos = (0,0)
+		if self.direction == -direction:
+			direction = -direction
+		else:
+			self.direction = direction
 		for i, part in enumerate(self):
 			if i == 0:
 				current_pos = part.get_pos()
@@ -72,10 +75,6 @@ pg.display.set_caption("Slither")
 
 # init the snake
 snake = Snake()
-
-
-
-
 
 
 
