@@ -29,15 +29,19 @@ class SnakePart(pg.sprite.Sprite):
 
 
 class Snake(pg.sprite.Group):
-	def __init__(self):
+	def __init__(self, n_start=3):
 		super().__init__()
 
 		self._dpos = 20
-		self.pos_list = []
+		
+		self.direction = MOVE_DOWN
 
-	def add_part(self, part):
-		super().add(part)
-		self.pos_list.append(part.get_pos())
+		for i in range(n_start):
+			part = SnakePart((0,0), (20, 20), RED)
+			part.set_pos((200+self._dpos*i,200))
+			self.add(part)
+
+
 
 	def update_pos(self, direction):
 		current_pos = (0,0)
@@ -46,11 +50,11 @@ class Snake(pg.sprite.Group):
 				current_pos = part.get_pos()
 				if direction == MOVE_LEFT:
 					part.set_pos((current_pos[0]-self._dpos, current_pos[1]))
-				if direction == MOVE_RIGHT:
+				elif direction == MOVE_RIGHT:
 					part.set_pos((current_pos[0]+self._dpos, current_pos[1]))
-				if direction == MOVE_UP:
+				elif direction == MOVE_UP:
 					part.set_pos((current_pos[0], current_pos[1]-self._dpos))
-				if direction == MOVE_DOWN:
+				elif direction == MOVE_DOWN:
 					part.set_pos((current_pos[0], current_pos[1]+self._dpos))
 				
 			else:
@@ -69,18 +73,6 @@ pg.display.set_caption("Slither")
 # init the snake
 snake = Snake()
 
-part = SnakePart((0,0), (20, 20), RED)
-part.set_pos((200,200))
-
-part2 = SnakePart((0,0), (20, 20), RED)
-part2.set_pos((220,200))
-
-part3 = SnakePart((0,0), (20, 20), RED)
-part3.set_pos((240,200))
-
-snake.add_part(part)
-snake.add_part(part2)
-snake.add_part(part3)
 
 
 
@@ -95,7 +87,7 @@ clock = pg.time.Clock()
 move_left = False
 move_right = False
 move_up = False
-move_down = False
+move_down = True
 
 running = True
 while running:
@@ -109,24 +101,26 @@ while running:
 				running = False
 
 			if event.key == pg.K_LEFT:
+				move_right = False
+				move_up = False
+				move_down = False
 				move_left = True
-			elif event.key == pg.K_RIGHT:
+			if event.key == pg.K_RIGHT:
+				move_left = False
+				move_up = False
+				move_down = False
 				move_right = True
-			elif event.key == pg.K_UP:
+			if event.key == pg.K_UP:
+				move_left = False
+				move_right = False
+				move_down = False
 				move_up = True
-			elif event.key == pg.K_DOWN:
+			if event.key == pg.K_DOWN:
+				move_left = False
+				move_right = False
+				move_up = False
 				move_down = True
 
-		elif event.type == pg.KEYUP:
-			if event.key == pg.K_LEFT:
-				move_left = False
-			elif event.key == pg.K_RIGHT:
-				move_right = False
-			elif event.key == pg.K_UP:
-				move_up = False
-			elif event.key == pg.K_DOWN:
-				move_down = False
-				
 	if move_left:
 		snake.update_pos(MOVE_LEFT)
 	elif move_right:
