@@ -9,6 +9,7 @@ FRAMES_PER_SECOND = 10
 # some colors
 RED = (255, 0 ,0)
 YELLOW = (255, 255, 0)
+BLACK = (0, 0, 0)
 
 # moving parameters
 MOVE_LEFT = -1
