@@ -148,7 +148,6 @@ class Food(pg.sprite.Sprite):
 		self.snake = snake
 
 		def generate_pos():
-			
 			while True:
 				ok = []
 				x = np.random.randint(WIDTH // DELTA_POS) * DELTA_POS

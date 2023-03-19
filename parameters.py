@@ -3,8 +3,8 @@
 WIDTH, HEIGHT = 500, 500
 DELTA_POS = 20
 
-# clock
-FRAMES_PER_SECOND = 10
+# clock (speed of the snake)
+SPEED = 10
 
 # some colors
 RED = (255, 0 ,0)

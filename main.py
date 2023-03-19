@@ -100,7 +100,7 @@ while active:
 		food.draw(screen)
 
 		# clock and flip
-		clock.tick(FRAMES_PER_SECOND)
+		clock.tick(SPEED)
 		pg.display.flip()
 
 		# winning the game
