@@ -91,16 +91,22 @@ while active:
 			snake.add_part()
 			food = Food(snake)
 			score += 1
+
 		food.update()
 
 		# draw scene
-		screen.fill(BLACK)
+		screen.fill(BLUE)
 		snake.draw(screen)
 		food.draw(screen)
 
 		# clock and flip
 		clock.tick(FRAMES_PER_SECOND)
 		pg.display.flip()
+
+		# winning the game
+		if score >= DELTA_POS**2:
+			active = win_window(score)
+			running = False
 
 	pg.quit()
 

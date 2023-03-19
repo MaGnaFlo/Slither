@@ -113,3 +113,48 @@ def collide_window(score: int):
 	window.mainloop()
 
 	return keep_active.value
+
+def win_window(score: int):
+	''' Display the start window when a collision happens.
+		Returns whether or not the player wants to keep playing.
+	'''
+	keep_active = Bool(True)
+
+	window = Tk()
+	window.title("Slither")
+	window.grid_columnconfigure(0, weight=1)
+
+	center_window(window)
+
+	frame = ttk.Frame(window, padding=10)
+	frame.grid()
+
+	label = ttk.Label(frame, text="Congratulations. You won!")
+	label.grid(column=0, row=0)
+	label_score = ttk.Label(frame, text=f"Perfect score: {score}")
+	label_score.grid(column=0, row=1)
+	label_play_again = ttk.Label(frame, text="Play again?")
+	label_play_again.grid(column=0, row=2)
+
+	button_frame = ttk.Frame(frame, padding=10)
+	button_frame.grid(column=0, row=2)
+
+	def start_game():
+		keep_active.value = True
+		window.destroy()
+
+	def exit_game():
+		keep_active.value = False
+		window.destroy()
+
+	button_continue = ttk.Button(button_frame, text="Play again", command=start_game)
+	button_continue.grid(column=0, row=0)
+	button_continue = ttk.Button(button_frame, text="Quit", command=exit_game)
+	button_continue.grid(column=1, row=0)
+
+	set_active = window.protocol("WM_DELETE_WINDOW", exit_game)
+	window.mainloop()
+
+	return keep_active.value
+
+

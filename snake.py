@@ -38,7 +38,7 @@ class Snake(pg.sprite.Group):
 		self.direction = MOVE_DOWN
 
 		for i in range(n_start):
-			part = SnakePart((0,0), (DELTA_POS, DELTA_POS), RED)
+			part = SnakePart((0,0), (DELTA_POS, DELTA_POS), GREEN)
 			part.set_pos((240, 100-DELTA_POS*i))
 			self.add(part)
 
@@ -61,7 +61,7 @@ class Snake(pg.sprite.Group):
 			x = tail.get_pos()[0] 
 			y = tail.get_pos()[1] + DELTA_POS
 
-		part = SnakePart((0,0), (DELTA_POS, DELTA_POS), RED)
+		part = SnakePart((0,0), (DELTA_POS, DELTA_POS), GREEN)
 		part.set_pos((x,y))
 		self.add(part)
 
@@ -148,14 +148,16 @@ class Food(pg.sprite.Sprite):
 		self.snake = snake
 
 		def generate_pos():
-			search = True
-			while search:
+			
+			while True:
+				ok = []
 				x = np.random.randint(WIDTH // DELTA_POS) * DELTA_POS
 				y = np.random.randint(HEIGHT // DELTA_POS) * DELTA_POS
 				for part in self.snake:
 					x_, y_ = part.get_pos()
-					search = search and (x_ != x and y_ != y)
-
+					ok.append(x_ != x and y_ != y)
+				if all(ok):
+					break
 			return x, y
 
 		# the position is random within the lattice.
