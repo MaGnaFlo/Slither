@@ -141,7 +141,7 @@ class Snake(pg.sprite.Group):
 
 class Food(pg.sprite.Sprite):
 	''' Class managing a single food element. '''
-	def __init__(self, size=(20,20), color=YELLOW):
+	def __init__(self, size=(DELTA_POS, DELTA_POS), color=YELLOW):
 		self.image = pg.Surface(size)
 		pg.draw.rect(self.image, color, pg.Rect(0, 0, *size))
 		self.rect = self.image.get_rect()

@@ -29,8 +29,11 @@ while active:
 
 	clock = pg.time.Clock()
 
+	score = 0
+
 	running = True # controls the game loop.
 	while running:
+
 		for event in pg.event.get():
 
 			if event.type == QUIT:
@@ -80,13 +83,14 @@ while active:
 		# update the snake, check for collisions and swallowing food.
 		snake.update()
 		if snake.check_collisions():
-			active = collide_window()
+			active = collide_window(score)
 			running = False
 
 		swallowed = snake.swallow_food(food)
 		if swallowed:
 			snake.add_part()
 			food = Food()
+			score += 1
 		food.update()
 
 		# draw scene

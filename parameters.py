@@ -1,6 +1,6 @@
 
 # lattice
-WIDTH, HEIGHT = 640, 480 
+WIDTH, HEIGHT = 500, 500
 DELTA_POS = 20
 
 # clock

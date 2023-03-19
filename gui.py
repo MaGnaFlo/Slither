@@ -71,7 +71,7 @@ def start_window():
 
 	return set_active.value
 
-def collide_window():
+def collide_window(score: int):
 	''' Display the start window when a collision happens.
 		Returns whether or not the player wants to keep playing.
 	'''
@@ -86,10 +86,12 @@ def collide_window():
 	frame = ttk.Frame(window, padding=10)
 	frame.grid()
 
-	label = ttk.Label(frame, text="Ay ay! You lose!")
+	label = ttk.Label(frame, text="Woops, you lose!")
 	label.grid(column=0, row=0)
-	label2 = ttk.Label(frame, text="Play again?")
-	label2.grid(column=0, row=1)
+	label_score = ttk.Label(frame, text=f"Score: {score}")
+	label_score.grid(column=0, row=1)
+	label_play_again = ttk.Label(frame, text="Play again?")
+	label_play_again.grid(column=0, row=2)
 
 	button_frame = ttk.Frame(frame, padding=10)
 	button_frame.grid(column=0, row=2)
