@@ -19,7 +19,7 @@ while active:
 	snake = Snake(INITIAL_PARTS)
 
 	# first food
-	food = Food()
+	food = Food(snake)
 
 	# init movements, starting with going down.
 	move_left = False
@@ -89,7 +89,7 @@ while active:
 		swallowed = snake.swallow_food(food)
 		if swallowed:
 			snake.add_part()
-			food = Food()
+			food = Food(snake)
 			score += 1
 		food.update()
 

@@ -141,17 +141,32 @@ class Snake(pg.sprite.Group):
 
 class Food(pg.sprite.Sprite):
 	''' Class managing a single food element. '''
-	def __init__(self, size=(DELTA_POS, DELTA_POS), color=YELLOW):
+	def __init__(self, snake, size=(DELTA_POS, DELTA_POS), color=YELLOW):
 		self.image = pg.Surface(size)
 		pg.draw.rect(self.image, color, pg.Rect(0, 0, *size))
 		self.rect = self.image.get_rect()
+		self.snake = snake
+
+		def generate_pos():
+			search = True
+			while search:
+				x = np.random.randint(WIDTH // DELTA_POS) * DELTA_POS
+				y = np.random.randint(HEIGHT // DELTA_POS) * DELTA_POS
+				for part in self.snake:
+					x_, y_ = part.get_pos()
+					search = search and (x_ != x and y_ != y)
+
+			return x, y
 
 		# the position is random within the lattice.
-		self.rect.x = np.random.randint(WIDTH // DELTA_POS) * DELTA_POS
-		self.rect.y = np.random.randint(HEIGHT // DELTA_POS) * DELTA_POS
+		x, y = generate_pos()
+		self.rect.x = x
+		self.rect.y = y
 
 	def get_pos(self):
 		return (self.rect.x, self.rect.y)
 
 	def draw(self, screen):
 		screen.blit(self.image, self.rect)
+
+
