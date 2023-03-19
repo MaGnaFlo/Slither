@@ -19,4 +19,3 @@ MOVE_DOWN = 2
 
 # number of parts of the snake
 INITIAL_PARTS = 3
-

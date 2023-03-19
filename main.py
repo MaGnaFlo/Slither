@@ -7,9 +7,7 @@ from snake import Snake, Food
 from gui import *
 
 # First display GUI.
-start_window()
-
-active = True # controls the outer loop: application as a whole.
+active = start_window() # controls the outer loop: application as a whole.
 
 while active:
 
@@ -82,7 +80,7 @@ while active:
 		# update the snake, check for collisions and swallowing food.
 		snake.update()
 		if snake.check_collisions():
-			collide_window()
+			active = collide_window()
 			running = False
 
 		swallowed = snake.swallow_food(food)
